@@ -1,11 +1,25 @@
-def carica_da_file(file_path):
-    """Carica le foto dal file, creando un nuovo anno ogni volta che compare per la prima volta"""
-    # TODO
+from csv import DictReader
 
+
+def carica_da_file(nomeFile, album):
+    """Carica le foto dal file, creando un nuovo anno ogni volta che compare per la prima volta"""
+
+    try:
+        file = open(nomeFile, "r")
+        reader = DictReader(file)
+
+        for foto in reader:
+            album.append(foto)
+        return album
+
+    except FileNotFoundError:
+        return None
+
+    #print(album)
 
 def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
     """Aggiunge una foto all'album, creando l'anno al volo se non è ancora presente"""
-    # TODO
+
 
 
 def cerca_foto(album, codice):
@@ -20,7 +34,7 @@ def elenco_foto_anno_per_titolo(album, anno):
 
 def main():
     album = []
-    file_path = "album_fotografico.csv"
+    file_path = "album_fotografco.csv"
 
     while True:
         print("\n--- MENU ALBUM FOTOGRAFICO ---")
@@ -34,8 +48,8 @@ def main():
 
         if scelta == "1":
             while True:
-                file_path = input("Inserisci il path del file da caricare: ").strip()
-                album = carica_da_file(file_path)
+                file_path = input("Inserisci il path del file da caricare: ").strip() #nelle funzioni è "nomeFile"
+                album = carica_da_file(file_path, album)
                 if album is not None:
                     break
 
