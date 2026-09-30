@@ -1,4 +1,5 @@
 from csv import DictReader
+from pprint import pprint
 
 
 def carica_da_file(nomeFile, album):
@@ -6,25 +7,50 @@ def carica_da_file(nomeFile, album):
 
     try:
         file = open(nomeFile, "r")
-        reader = DictReader(file)
+        reader = DictReader(file, skipinitialspace=True)
 
         for foto in reader:
             album.append(foto)
+
+        file.close()
         return album
+
 
     except FileNotFoundError:
         return None
 
-    #print(album)
+
 
 def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
     """Aggiunge una foto all'album, creando l'anno al volo se non è ancora presente"""
+    for foto in album:
+        if foto["codice"].upper() == codice.upper() or foto["titolo"].upper() == titolo.upper():
+            print("Codice e/o titolo già presente!")
+            return False
 
+    newFoto = {
+        "codice": codice,
+        "titolo": titolo,
+        "autore": autore,
+        "mese": str(mese),
+        "anno": str(anno),
+        }
 
+    album.append(newFoto)
+
+    return True
 
 def cerca_foto(album, codice):
     """Cerca una foto nell'album dato il codice"""
-    # TODO
+    trovato = False
+    i = 0
+    for foto in album:
+        if codice.upper() == foto["codice"].upper():
+            trovato = True
+            break
+        else:
+            i += 1
+    return trovato, i
 
 
 def elenco_foto_anno_per_titolo(album, anno):
@@ -34,7 +60,7 @@ def elenco_foto_anno_per_titolo(album, anno):
 
 def main():
     album = []
-    file_path = "album_fotografco.csv"
+    file_path = "album_fotografico.csv"
 
     while True:
         print("\n--- MENU ALBUM FOTOGRAFICO ---")
@@ -49,9 +75,11 @@ def main():
         if scelta == "1":
             while True:
                 file_path = input("Inserisci il path del file da caricare: ").strip() #nelle funzioni è "nomeFile"
-                album = carica_da_file(file_path, album)
-                if album is not None:
+                prova = carica_da_file(file_path, album)
+                if prova is not None:
+                    album = prova
                     break
+            pprint(album)
 
         elif scelta == "2":
             if not album:
@@ -62,8 +90,15 @@ def main():
             titolo = input("Titolo: ").strip()
             autore = input("Autore: ").strip()
             try:
-                mese = int(input("Mese (1-12): ").strip())
+                valido = False
+                while not valido:
+                    mese = int(input("Mese (1-12): ").strip())
+                    if mese < 1 or mese > 12:
+                        print("il mese inserito non è valido. riprova")
+                    else:
+                        valido = True
                 anno = int(input("Anno: ").strip())
+
             except ValueError:
                 print("Errore: inserire valori numerici validi per mese e anno.")
                 continue
@@ -71,6 +106,7 @@ def main():
             foto = aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path)
             if foto:
                 print(f"Foto aggiunta con successo!")
+                pprint(album)
             else:
                 print("Non è stato possibile aggiungere la foto.")
 
@@ -80,9 +116,9 @@ def main():
                 continue
 
             codice = input("Inserisci il codice della foto da cercare: ").strip()
-            risultato = cerca_foto(album, codice)
+            risultato, indice = cerca_foto(album, codice)
             if risultato:
-                print(f"Foto trovata: {risultato}")
+                print(f"Foto trovata:\n{album[indice]}")
             else:
                 print("Foto non trovata.")
 
