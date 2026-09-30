@@ -38,6 +38,10 @@ def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
 
     album.append(newFoto)
 
+    fileout = open(file_path, "a")
+    fileout.write(",".join(newFoto.values()) + "\n")
+    fileout.close()
+
     return True
 
 def cerca_foto(album, codice):
@@ -55,8 +59,16 @@ def cerca_foto(album, codice):
 
 def elenco_foto_anno_per_titolo(album, anno):
     """Ordina i titoli delle foto di un dato anno in ordine alfabetico"""
-    # TODO
+    listaAnno = []
+    for foto in album:
+        if foto["anno"] == str(anno):
+            listaAnno.append(foto["titolo"])
+    listaAnno.sort()
 
+    if listaAnno == []:
+        return None
+
+    return listaAnno
 
 def main():
     album = []
