@@ -7,8 +7,8 @@ def carica_da_file(nomeFile, album):
 
     try:
         file = open(nomeFile, "r")
-        reader = DictReader(file, skipinitialspace=True) #skipinitialspace elimina lo spazio all'inizio delle chiavi e impedisce la generazione di eventuali errori successivi dovuti al confronto tra chiavi
-
+        reader = DictReader(file, skipinitialspace=True) #skipinitialspace elimina lo spazio all'inizio delle chiavi e
+                                                         #impedisce la generazione di eventuali errori successivi dovuti al confronto tra chiavi
         for foto in reader:
             album.append(foto)
 
@@ -39,8 +39,8 @@ def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
     album.append(newFoto)
 
     fileout = open(file_path, "a")
-    fileout.write(",".join(newFoto.values()) + "\n") #aggiugo al file la foto appena creata separando i campi con la virgola
-    fileout.close()                                  #(il join mi serve per mettere in una stringa gli elementi del dizionario newfFoto)
+    fileout.write(",".join(list(newFoto.values())) + "\n") #aggiugo al file la foto appena creata separando i campi con la virgola
+    fileout.close()                                  #il join mi serve per mettere in una stringa gli elementi della lista ricavata da newFoto
 
 
     return True
@@ -90,11 +90,11 @@ def main():
             while True:
                 prova = carica_da_file(file_path, album)
                 if prova is not None:
-                    album = prova       #permetto al programma di non bloccarsi qualora il file non fosse stato trovato
+                    album = prova       #permetto al programma di non bloccarsi qualora il file non fosse stato trovato...
                     break
                 else:
                     file_path = input("File non trovato. Reinserisci il path del file da caricare: ").strip()
-                    #e di richiedere nuovamente il path
+                    #...e di richiedere nuovamente il path
             print(album)
 
         elif scelta == "2":
@@ -122,7 +122,7 @@ def main():
             foto = aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path)
             if foto:
                 print(f"Foto aggiunta con successo!")
-                print(", ".join(list(album[len(album)-1].values())))
+                print(", ".join(list(album[-1].values())))
             else:
                 print("Non è stato possibile aggiungere la foto.")
 
